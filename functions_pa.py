@@ -13,9 +13,12 @@ names_of_countries = [country['name'] for country in wanted_region]
 print(f"These are the countries in the region: {names_of_countries}")
 wanted_country = input("What country do you want to know about? ")
 if wanted_country in names_of_countries:
-    wanted_country = requests.get(f'https://countries.dev/alpha/{wanted_country}').json()
-    print(f"""{wanted_country}'s capital is {wanted_country['capital']}
-          {wanted_country}'s currency or currencies include {wanted_country['currencies']}""")
+    wanted_country = requests.get(f'https://countries.dev/name/{wanted_country.lower()}').json()
+    print(f"""{wanted_country[0]['name']}'s capital is {wanted_country[0]['capital']}
+          {wanted_country[0]['name']}'s currency or currencies include {wanted_country[0]['currencies']}
+          {wanted_country[0]['name']}'s language or languages include {wanted_country[0]['languages']}""")
+else:
+    print(f"That country is not in {which_region}")
 
 # country = requests.get('https://countries.dev/alpha/US').json()
 # print(country['name'], country['capital'])
