@@ -23,10 +23,16 @@ if wanted_country in names_of_countries:
         currencies = ' and '.join(currencies_list)
     else:
         currencies = ', '.join(currencies_list[:-1]) + ' and ' + currencies_list[-1]
-    languages = [language['name'] for language in wanted_country[0]['languages']]
+    languages_list = [language['name'] for language in wanted_country[0]['languages']]
+    if len(languages_list) == 1:
+        languages = languages_list[0]
+    elif len(languages_list) == 2:
+        languages = ' and '.join(languages_list)
+    else:
+        languages = ', '.join(languages_list[:-1]) + ' and ' + languages_list[-1]
     print(f"""{country}'s capital is {wanted_country[0]['capital']}
 {country}'s currency or currencies include {currencies}
-{country}'s language or languages include {', '.join(language['name'] for language in wanted_country[0]['languages'])}""")
+{country}'s language or languages include {languages}""")
 else:
     print(f"That country is not in {which_region}") #do it with try/except
     
