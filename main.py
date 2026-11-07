@@ -5,7 +5,5 @@ Created on Sat Nov  7 00:35:56 2026
 
 @author: johannramos
 """
-
-import requests
-all_regions = requests.get("https://countries.dev/regions").json()
-print(all_regions)
+from functions_pa import what_region
+what_region()
