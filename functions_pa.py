@@ -16,8 +16,16 @@ wanted_country = input("What country do you want to know about? ")
 if wanted_country in names_of_countries:
     wanted_country = requests.get(f'https://countries.dev/name/{wanted_country.lower()}').json()
     country = wanted_country[0]['name']
+    currencies_list = [currency['name'] for currency in wanted_country[0]['currencies']]
+    if len(currencies_list) == 1:
+        currencies = currencies_list[0]
+    elif len(currencies_list) == 2:
+        currencies = ' and '.join(currencies_list)
+    else:
+        currencies = ', '.join(currencies_list[:-1]) + ' and ' + currencies_list[-1]
+    languages = [language['name'] for language in wanted_country[0]['languages']]
     print(f"""{country}'s capital is {wanted_country[0]['capital']}
-{country}'s currency or currencies include {', '.join(currency['name'] for currency in wanted_country[0]['currencies'])}
+{country}'s currency or currencies include {currencies}
 {country}'s language or languages include {', '.join(language['name'] for language in wanted_country[0]['languages'])}""")
 else:
     print(f"That country is not in {which_region}") #do it with try/except
