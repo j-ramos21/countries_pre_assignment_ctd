@@ -18,7 +18,7 @@ if wanted_country in names_of_countries:
     country = wanted_country[0]['name']
     print(f"""{country}'s capital is {wanted_country[0]['capital']}
 {country}'s currency or currencies include {wanted_country[0]['currencies'][0]['name']}
-{country}'s language or languages include {wanted_country[0]['languages'][0]['name']}""")
+{country}'s language or languages include {', '.join(language['name'] for language in wanted_country[0]['languages'])}""")
 else:
     print(f"That country is not in {which_region}") #do it with try/except
     
