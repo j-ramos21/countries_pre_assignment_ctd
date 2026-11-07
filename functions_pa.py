@@ -17,7 +17,7 @@ if wanted_country in names_of_countries:
     wanted_country = requests.get(f'https://countries.dev/name/{wanted_country.lower()}').json()
     country = wanted_country[0]['name']
     print(f"""{country}'s capital is {wanted_country[0]['capital']}
-{country}'s currency or currencies include {wanted_country[0]['currencies'][0]['name']}
+{country}'s currency or currencies include {', '.join(currency['name'] for currency in wanted_country[0]['currencies'])}
 {country}'s language or languages include {', '.join(language['name'] for language in wanted_country[0]['languages'])}""")
 else:
     print(f"That country is not in {which_region}") #do it with try/except
