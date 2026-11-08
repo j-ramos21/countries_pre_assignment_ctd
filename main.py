@@ -5,5 +5,5 @@ Created on Sat Nov  7 00:35:56 2026
 
 @author: johannramos
 """
-from functions_pa import what_region
-what_region()
+from functions_pa import main
+main()
