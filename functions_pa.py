@@ -8,20 +8,19 @@ Created on Sun Nov  1 22:30:58 2026
 import requests
 def what_region():
     all_regions = requests.get("https://countries.dev/regions").json()
-    global which_region
-    which_region = input("What region is your country in? (case-sensitive) ")
-    if which_region in all_regions:
-        wanted_region = requests.get(f"https://countries.dev/region/{which_region}").json()
-        global names_of_countries
-        names_of_countries = [country['name'] for country in wanted_region]
-        print(f"These are the countries in the region: {', '.join(names_of_countries[:-1])}, and {names_of_countries[-1]}")
-    else:
-        print(f"""Error: Blank input or region does not exist.
+    while True:
+        which_region = input("What region is your country in? (case-sensitive) ")
+        if which_region in all_regions:
+            wanted_region = requests.get(f"https://countries.dev/region/{which_region}").json()
+            names_of_countries = [country['name'] for country in wanted_region]
+            print(f"These are the countries in the region: {', '.join(names_of_countries[:-1])}, and {names_of_countries[-1]}")
+            return which_region, names_of_countries
+        else:
+            print(f"""Error: Blank input or region does not exist.
 These are all the regions: {', '.join(all_regions[:-1])}, and {all_regions[-1]}
 Please choose one.""")
-        what_region()
 
-def what_country():
+def what_country(which_region, names_of_countries):
     wanted_country = input("What country do you want to know about? ")
     if wanted_country in names_of_countries:
         wanted_country = requests.get(f'https://countries.dev/name/{wanted_country.lower()}').json()
@@ -48,10 +47,9 @@ def what_country():
 {country}'s language or languages include {languages}""")
     else:
         print(f"""Error: Country is not in {which_region}, does not exist, or blank input.
-These are all the countries in {which_region}: {', '.join(names_of_countries[:-1])}, and {names_of_countries[-1]}
-Please choose one.""")
-        what_country()
+Please choose one from the list above.""")
+        what_country(which_region, names_of_countries)
 
 def main():
-    what_region()
-    what_country()
+    which_region, names_of_countries = what_region()
+    what_country(which_region, names_of_countries)
