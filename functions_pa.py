@@ -7,9 +7,11 @@ Created on Sun Nov  1 22:30:58 2026
 """
 import requests
 #This function fetches all the regions, the region the user's country is in, and the country the user wants. It prompts the user what region is their country in. It shows all the regions if there was an incorrect input.
-#After a correct input, it prints all the countries in the region and if there is more than one country then it prints all the countries in the region and asks the user what country they want to know about. The user is prompted again if there was an incorrect input. If there is only one country, the user is not prompted because there is only one option.
+#After a correct input, it prints all the countries in the region, and if there is more than one country it will print all the countries in the region, and then asks the user what country they want to know about. 
+#The user is prompted again if there was an incorrect input. If there is only one country, the user is not prompted because there is only one option.
 #@param none
 #@return wanted_country The fetched API of user's chosen country
+#@return names_of_countries The list of countries in the chosen region
 def fetching_region_and_country():
     #getting all the regions from the API
     all_regions = requests.get("https://countries.dev/regions").json()
@@ -19,7 +21,7 @@ def fetching_region_and_country():
         which_region = input("What region is your country in? (case-sensitive) ")
         #conditional statement that if the chosen region is in the regions list then it fetches the region from the API or else the list of all the regions is printed and the user is prompted again
         if which_region in all_regions:
-            #gets the wanted region from the API
+            #gets the wanted region from the API and then the while loop breaks
             wanted_region = requests.get(f"https://countries.dev/region/{which_region}").json()
             break
         else:
@@ -36,10 +38,11 @@ Please choose one.\n""")
         #while loop that restarts when there is an incorrect input (country) and moves on when the input is an existing region
         while True:
             #prompts the user what country they want to know about
+            #by the way, the API has Palestine as "Palestine, State of", so it will look off in its list
             which_country = input("What country do you want to know about? (case-sensative) ")
             #conditional statement that if the chosen country is in the list of all the countries in the region then it fetches the country and the fields from the API or else the user is again prompted to enter a country from the list of countries
             if which_country in names_of_countries:
-                #gets the chosen country from the API
+                #gets the chosen country from the API and then the while loop breaks
                 wanted_country = requests.get(f'https://countries.dev/name/{which_country.lower()}').json()
                 return wanted_country, names_of_countries
                 break
@@ -48,18 +51,17 @@ Please choose one.\n""")
                 print(f"""Error: The country "{which_country}" is not a country in {which_region}, is not capitalized, does not exist, or is a blank input.
 Please choose one from the list above.\n""")
     else:
-        #lets the user know there is only one country in the chosen region
-        # print(f"This is the only country in the region: {names_of_countries[0]}")
         #gets the only country in the reigon from the API
         wanted_country = requests.get(f'https://countries.dev/name/{names_of_countries[0].lower()}').json()
         return wanted_country, names_of_countries
 
-#This function processes the fetched data. It saves three fields, the capital, currencies, and languages. If the fields are empty, then it saves them as nonexistent.
-#@param wanted_country The fetched API of user's chosen country from what_region()
+#This function processes the fetched data. It saves three fields, the capital, currencies, and languages of the chosen country.
+#If the fields are empty, then it saves them as nonexistent. It also checks if there are more than one currency and language in the chosen country.
+#@param wanted_country The fetched API of user's chosen country from fetching_region_and_country()
 #@return country The name of the user's chosen country
 #@return capital The capital of the user's chosen country
-#@return currencies All the currencies of the user's chosen country
-#@return languages All the languages of the user's chosen country
+#@return currencies A string of all the currencies of the user's chosen country
+#@return languages A string of all the languages of the user's chosen country
 #@return currencies_list List of all the currencies of the user's chosen country
 #@return languages_list List of all the languages of the user's chosen country
 def processing_info(wanted_country):
@@ -82,11 +84,11 @@ def processing_info(wanted_country):
             #the only currency is printed
             currencies = currencies_list[0]
         elif len(currencies_list) == 2:
-            #the two currencies are printed with an "and"
-            currencies = ' and '.join(currencies_list)
+            #the two currencies are printed with "and the"
+            currencies = ' and the '.join(currencies_list)
         else:
-            #the currencies are printed with commas and an "and"
-            currencies = ', '.join(currencies_list[:-1]) + ' and ' + currencies_list[-1]
+            #the currencies are printed with commas, "and", and "the"
+            currencies = ', the '.join(currencies_list[:-1]) + ', and the ' + currencies_list[-1]
     else:
         #no currency, so it is set to nonexistent and the list is empty
         currencies = "nonexistent"
@@ -114,18 +116,21 @@ def processing_info(wanted_country):
         
 
 #This function displays three fields of the country, the capital, currencies, and languages. It also displays if there is only one country in the region and if the fields are nonexistent.
-#@param country The name of the user's chosen country from what_country(which_region, wanted_region)
-#@param capital The capital of the user's chosen country from what_country(which_region, wanted_region)
-#@param currencies All the currencies of the user's chosen country from what_country(which_region, wanted_region)
-#@param languages All the languages of the user's chosen country from what_country(which_region, wanted_region)
-#@param currencies_list List of all the currencies of the user's chosen country from what_country(which_region, wanted_region)
-#@param languages_list List of all the languages of the user's chosen country from what_country(which_region, wanted_region)
+#@param country The name of the user's chosen country from processing_info(wanted_country)
+#@param capital The capital of the user's chosen country from processing_info(wanted_country)
+#@param currencies A string of all the currencies of the user's chosen country from processing_info(wanted_country)
+#@param languages A string of all the languages of the user's chosen country from processing_info(wanted_country)
+#@param currencies_list List of all the currencies of the user's chosen country from processing_info(wanted_country)
+#@param languages_list List of all the languages of the user's chosen country from processing_info(wanted_country)
+#@param names_of_countries The list of countries in the chosen region from fetching_region_and_country()
 #@return none
 def displaying_info(country, capital, currencies, languages, currencies_list, languages_list, names_of_countries):
+    #conditional statement that lets the user know if there is only one country in the region or does nothing if there are more than one country in the region
     if len(names_of_countries) == 1:
         #lets the user know there is only one country in the chosen region
         print(f"This is the only country in the region: {names_of_countries[0]}")
     else:
+        #nothing happens if there are more than 1 country in the region
         None
     #prints the capital of the chosen country or that it is nonexistent
     print(f"{country}'s capital is {capital}")
@@ -139,7 +144,7 @@ def displaying_info(country, capital, currencies, languages, currencies_list, la
         print(f"{country}'s currency is {currencies}")
     else:
         #prints all the currencies
-        print(f"{country}'s currencies are {currencies}")
+        print(f"{country}'s currencies are the {currencies}")
     
     #conditional statement that if the list of languages has less than or equal to 1 item then it uses "is" or else it uses "are"
     if len(languages_list) <= 1:
